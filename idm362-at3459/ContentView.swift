@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var buttonTapped = false
+    @State private var showMessage = false
     var body: some View {
         ZStack {
             Color.blue.opacity(0.1).edgesIgnoringSafeArea(.all)
@@ -32,7 +33,10 @@ struct ContentView: View {
                     .font(.custom("Avenir-Heavy", size: 20))
                     .foregroundColor(.red)
                 Button(action: {
-                    print("Button tapped!")
+                    showMessage = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        showMessage = false
+                    }
                 }) {
                     Text("Click Me")
                         .font(.custom("Avenir-Heavy", size: 18))
@@ -43,6 +47,16 @@ struct ContentView: View {
                         .shadow(radius: 5)
                 }
                 .padding(.top, 20)
+                if showMessage {
+                    Text("Hello! how are you?")
+                        .font(.custom("Avenir-Heavy", size: 16))
+                        .foregroundColor(.white)
+                        .padding(10)
+                        .background(Color.black.opacity(0.7))
+                        .cornerRadius(8)
+                        .transition(.opacity)
+                        .animation(.easeInOut, value: showMessage)
+                }
                 Spacer()
             }
             .padding()
