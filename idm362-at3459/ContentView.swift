@@ -57,7 +57,7 @@ struct ContentView: View {
                         .transition(.opacity)
                         .animation(.easeInOut, value: showMessage)
                 }
-                Spacer()
+//                Spacer()
             }
             .padding()
         }
