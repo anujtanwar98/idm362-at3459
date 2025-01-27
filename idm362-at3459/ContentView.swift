@@ -67,7 +67,7 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(isPresented: $showNewGroupSheet) {
-            Text("Create New Group")
+            CreateGroupView(groups: $groups)
         }
     }
     
