@@ -9,13 +9,15 @@ import SwiftUI
 
 struct ContentView: View {
     // Color definitions
-    private let backgroundColorLight = Color(red: 0.95, green: 0.95, blue: 0.97)
-    private let backgroundColorDark = Color(red: 0.11, green: 0.11, blue: 0.12)
-    private let cardBackgroundLight = Color.white
-    private let cardBackgroundDark = Color(red: 0.17, green: 0.17, blue: 0.18)
+    private let backgroundColorLight = Color(red: 0.98, green: 0.97, blue: 0.95)
+    private let backgroundColorDark = Color(red: 0.13, green: 0.12, blue: 0.15)
+    private let cardBackgroundLight = Color(red: 1.0, green: 1.0, blue: 1.0)
+    private let cardBackgroundDark = Color(red: 0.18, green: 0.17, blue: 0.20)
     private let accentColor = Color.blue
     private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
     private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
+    private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
+    private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
 
     @State private var groups: [Group] = [
         Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
@@ -35,7 +37,8 @@ struct ContentView: View {
                     VStack(spacing: 20) {
                         ForEach(groups) { group in
                             GroupCard(group: group, cardBackgroundColor: cardBackgroundColor,
-                                  totalPriceColor: totalPriceColor)
+                                  totalPriceColor: totalPriceColor,
+                                      titleColor: groupTitleColor)
                                 .transition(.scale)
                         }
                     }
@@ -84,6 +87,12 @@ struct ContentView: View {
             return traitCollection.userInterfaceStyle == .dark ? UIColor(self.cardBackgroundDark) : UIColor(self.cardBackgroundLight)
         })
     }
+    
+    private var groupTitleColor: Color {
+        Color(UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textColorDark) : UIColor(self.textColorLight)
+        })
+    }
 }
 
 struct Group: Identifiable {
@@ -97,6 +106,7 @@ struct GroupCard: View {
     let group: Group
     let cardBackgroundColor: Color
     let totalPriceColor: Color
+    let titleColor: Color
     
     var body: some View {
         NavigationLink(destination: Text("Group Details")) {
@@ -105,6 +115,7 @@ struct GroupCard: View {
                     Text(group.name)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundColor(titleColor)
                     
                     HStack {
                         Image(systemName: "person.3.fill")
