@@ -15,6 +15,7 @@ struct ContentView: View {
     private let cardBackgroundDark = Color(red: 0.17, green: 0.17, blue: 0.18)
     private let accentColor = Color.blue
     private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
+    private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
 
     @State private var groups: [Group] = [
         Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
@@ -114,9 +115,12 @@ struct GroupCard: View {
             }
             
             HStack {
-                Text("Total: $\(String(format: "%.2f", group.totalAmount))")
-            }
-            .foregroundColor(.secondary)
+                Text("Total:")
+                    .foregroundColor(.secondary)
+                Text("$\(String(format: "%.2f", group.totalAmount))")
+                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.3))
+                    .fontWeight(.bold)
+                }
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)
