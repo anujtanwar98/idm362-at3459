@@ -34,7 +34,8 @@ struct ContentView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         ForEach(groups) { group in
-                            GroupCard(group: group, cardBackgroundColor: cardBackgroundColor)
+                            GroupCard(group: group, cardBackgroundColor: cardBackgroundColor,
+                                  totalPriceColor: totalPriceColor)
                                 .transition(.scale)
                         }
                     }
@@ -95,38 +96,49 @@ struct Group: Identifiable {
 struct GroupCard: View {
     let group: Group
     let cardBackgroundColor: Color
+    let totalPriceColor: Color
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(group.name)
-                .font(.title2)
-                .fontWeight(.bold)
-            
+        NavigationLink(destination: Text("Group Details")) {
             HStack {
-                Image(systemName: "person.3.fill")
-            
-            .foregroundColor(.secondary)
-            
-            Text(group.members.joined(separator: ", "))
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .lineLimit(1)
-                .truncationMode(.tail)
-            }
-            
-            HStack {
-                Text("Total:")
-                    .foregroundColor(.secondary)
-                Text("$\(String(format: "%.2f", group.totalAmount))")
-                    .foregroundColor(Color(red: 0.3, green: 0.7, blue: 0.3))
-                    .fontWeight(.bold)
+                VStack(alignment: .leading, spacing: 12) {
+                    Text(group.name)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                    
+                    HStack {
+                        Image(systemName: "person.3.fill")
+                            .foregroundColor(.secondary)
+                        
+                        Text(group.members.joined(separator: ", "))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                    }
+                    
+                    HStack {
+                        Text("Total:")
+                            .foregroundColor(.secondary)
+                        Text("$\(String(format: "%.2f", group.totalAmount))")
+                            .foregroundColor(totalPriceColor)
+                            .fontWeight(.bold)
+                    }
                 }
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .padding()
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(cardBackgroundColor)
+            .cornerRadius(12)
+            .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         }
-        .padding()
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .background(cardBackgroundColor)
-        .cornerRadius(12)
-        .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
+        .buttonStyle(PlainButtonStyle())
     }
 }
 
