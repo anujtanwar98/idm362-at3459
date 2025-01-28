@@ -64,7 +64,7 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("FairShare")
-            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.large)
         }
         .sheet(isPresented: $showNewGroupSheet) {
             CreateGroupView(groups: $groups)
