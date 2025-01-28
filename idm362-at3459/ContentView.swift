@@ -113,7 +113,7 @@ struct GroupCard: View {
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(group.name)
-                        .font(.title2)
+                        .font(.custom("AvenirNext-DemiBold", size: 20))
                         .fontWeight(.bold)
                         .foregroundColor(titleColor)
                     
@@ -122,7 +122,7 @@ struct GroupCard: View {
                             .foregroundColor(.secondary)
                         
                         Text(group.members.joined(separator: ", "))
-                            .font(.caption)
+                            .font(.custom("AvenirNext-Regular", size: 14))
                             .foregroundColor(.secondary)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -130,9 +130,11 @@ struct GroupCard: View {
                     
                     HStack {
                         Text("Total:")
+                            .font(.custom("AvenirNext-Medium", size: 16))
                             .foregroundColor(.secondary)
                         Text("$\(String(format: "%.2f", group.totalAmount))")
                             .foregroundColor(totalPriceColor)
+                            .font(.custom("DINAlternate-Bold", size: 18))
                             .fontWeight(.bold)
                     }
                 }
