@@ -157,5 +157,6 @@ struct GroupCard: View {
 
 #Preview {
     ContentView()
+    
 }
 
