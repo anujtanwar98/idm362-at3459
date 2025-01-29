@@ -19,11 +19,7 @@ struct ContentView: View {
     private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
     private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
 
-    @State private var groups: [Group] = [
-        Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
-        Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 320),
-        Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 780)
-    ]
+    @State private var groups: [Group] = []
     
     @State private var showNewGroupSheet = false
     
