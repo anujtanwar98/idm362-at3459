@@ -8,6 +8,16 @@
 import SwiftUI
 
 struct CreateGroupView: View {
+    
+    private let backgroundColorLight = Color(red: 0.98, green: 0.97, blue: 0.95)
+    private let backgroundColorDark = Color(red: 0.13, green: 0.12, blue: 0.15)
+    private let accentColor = Color.blue
+    private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
+    private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
+    private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
+    private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
+    
+    
     @Environment(\.presentationMode) var presentationMode
     @Binding var groups: [Group]
     
@@ -17,6 +27,10 @@ struct CreateGroupView: View {
     
     var body: some View {
         NavigationView {
+            ZStack {
+                backgroundColor
+                    .edgesIgnoringSafeArea(.all)
+                
             Form {
                 Section(header: Text("Group Name")) {
                     TextField("Enter group name", text: $groupName)
@@ -41,6 +55,8 @@ struct CreateGroupView: View {
                     }
                 }
             }
+            .scrollContentBackground(.hidden)
+        }
             .navigationTitle("Create New Group")
             .navigationBarItems(
                 leading: Button("Cancel") {
@@ -52,6 +68,18 @@ struct CreateGroupView: View {
                 .disabled(groupName.isEmpty || members.isEmpty)
             )
         }
+    }
+    
+    private var backgroundColor: Color {
+        Color(UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.backgroundColorDark) : UIColor(self.backgroundColorLight)
+        })
+    }
+    
+    private var textColor: Color {
+        Color(UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textColorDark) : UIColor(self.textColorLight)
+        })
     }
     
     private func addMember() {

@@ -51,7 +51,7 @@ struct ContentView: View {
                             }
                         }) {
                             Image(systemName: "plus")
-                                .font(.title2)
+                                .font(.custom("AvenirNext-DemiBold", size: 20))
                                 .foregroundColor(.white)
                                 .frame(width: 60, height: 60)
                                 .background(
