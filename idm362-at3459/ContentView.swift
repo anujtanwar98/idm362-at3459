@@ -18,6 +18,8 @@ struct ContentView: View {
     private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
     private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
     private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
+    private let memberColorLight = Color(red: 0.08, green: 0.18, blue: 0.27)
+    private let memberColorDark = Color(red: 0.56, green: 0.80, blue: 0.99)
 
     @State private var groups: [Group] = []
     
@@ -34,7 +36,8 @@ struct ContentView: View {
                         ForEach(groups) { group in
                             GroupCard(group: group, cardBackgroundColor: cardBackgroundColor,
                                   totalPriceColor: totalPriceColor,
-                                      titleColor: groupTitleColor)
+                                      titleColor: groupTitleColor,
+                                      memberTextColor:memberTextColor)
                                 .transition(.scale)
                         }
                     }
@@ -89,6 +92,12 @@ struct ContentView: View {
             return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textColorDark) : UIColor(self.textColorLight)
         })
     }
+    
+    private var memberTextColor: Color {
+        Color(UIColor { traitCollection in
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.memberColorDark) : UIColor(self.memberColorLight)
+        })
+    }
 }
 
 struct Group: Identifiable {
@@ -103,6 +112,7 @@ struct GroupCard: View {
     let cardBackgroundColor: Color
     let totalPriceColor: Color
     let titleColor: Color
+    let memberTextColor: Color
     
     var body: some View {
         NavigationLink(destination: Text("Group Details")) {
@@ -115,11 +125,11 @@ struct GroupCard: View {
                     
                     HStack {
                         Image(systemName: "person.3.fill")
-                            .foregroundColor(.secondary)
+                            .foregroundColor(memberTextColor)
                         
                         Text(group.members.joined(separator: ", "))
                             .font(.custom("AvenirNext-Regular", size: 14))
-                            .foregroundColor(.secondary)
+                            .foregroundColor(memberTextColor)
                             .lineLimit(1)
                             .truncationMode(.tail)
                     }
