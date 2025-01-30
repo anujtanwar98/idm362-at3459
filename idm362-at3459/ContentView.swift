@@ -21,7 +21,11 @@ struct ContentView: View {
     private let memberColorLight = Color(red: 0.08, green: 0.18, blue: 0.27)
     private let memberColorDark = Color(red: 0.56, green: 0.80, blue: 0.99)
 
-    @State private var groups: [Group] = []
+    @State private var groups: [Group] = [
+        Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
+                Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 320),
+                Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 780)
+    ]
     
     @State private var showNewGroupSheet = false
     
@@ -115,7 +119,7 @@ struct GroupCard: View {
     let memberTextColor: Color
     
     var body: some View {
-        NavigationLink(destination: Text("Group Details")) {
+        NavigationLink(destination: GroupDetailView()) {
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(group.name)
