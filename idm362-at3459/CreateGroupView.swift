@@ -72,3 +72,8 @@ struct CreateGroupView: View {
     }
 }
 
+struct CreateGroupView_Previews: PreviewProvider {
+    static var previews: some View {
+        CreateGroupView(groups: .constant([]))
+    }
+}
