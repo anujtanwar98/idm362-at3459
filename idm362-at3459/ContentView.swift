@@ -16,8 +16,8 @@ struct ContentView: View {
     private let accentColor = Color.blue
     private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
     private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
-    private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
-    private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
+    private let titleColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
+    private let titleColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
     private let memberColorLight = Color(red: 0.08, green: 0.18, blue: 0.27)
     private let memberColorDark = Color(red: 0.56, green: 0.80, blue: 0.99)
 
@@ -40,7 +40,7 @@ struct ContentView: View {
                         ForEach(groups) { group in
                             GroupCard(group: group, cardBackgroundColor: cardBackgroundColor,
                                   totalPriceColor: totalPriceColor,
-                                      titleColor: groupTitleColor,
+                                      groupTitleColor: groupTitleColor,
                                       memberTextColor:memberTextColor)
                                 .transition(.scale)
                         }
@@ -93,7 +93,7 @@ struct ContentView: View {
     
     private var groupTitleColor: Color {
         Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textColorDark) : UIColor(self.textColorLight)
+            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.titleColorDark) : UIColor(self.titleColorLight)
         })
     }
     
@@ -115,7 +115,7 @@ struct GroupCard: View {
     let group: Group
     let cardBackgroundColor: Color
     let totalPriceColor: Color
-    let titleColor: Color
+    let groupTitleColor : Color
     let memberTextColor: Color
     
     var body: some View {
@@ -125,7 +125,7 @@ struct GroupCard: View {
                     Text(group.name)
                         .font(.custom("AvenirNext-DemiBold", size: 20))
                         .fontWeight(.bold)
-                        .foregroundColor(titleColor)
+                        .foregroundColor(groupTitleColor)
                     
                     HStack {
                         Image(systemName: "person.3.fill")
