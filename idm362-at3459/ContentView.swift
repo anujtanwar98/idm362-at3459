@@ -8,7 +8,7 @@ struct ContentView: View {
     @State private var groups: [Group] = [
         Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
                 Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 320),
-                Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 780)
+                Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 700)
     ]
     
     @State private var showNewGroupSheet = false
