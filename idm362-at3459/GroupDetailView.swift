@@ -9,25 +9,10 @@ struct GroupDetailView: View {
         Expense(title: "Activities", amount: 150)
     ]
     
-    // Color definitions
-    private let backgroundColorLight = Color(red: 0.98, green: 0.97, blue: 0.95)
-    private let backgroundColorDark = Color(red: 0.13, green: 0.12, blue: 0.15)
-    private let cardBackgroundLight = Color(red: 1.0, green: 1.0, blue: 1.0)
-    private let cardBackgroundDark = Color(red: 0.18, green: 0.17, blue: 0.20)
-    private let accentColor = Color.blue
-    private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
-    private let titleColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
-    private let titleColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
-    private let memberColorLight = Color(red: 0.08, green: 0.18, blue: 0.27)
-    private let memberColorDark = Color(red: 0.56, green: 0.80, blue: 0.99)
-    private let totalPriceColor = Color(red: 0.3, green: 0.7, blue: 0.3)
-
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                GroupSummaryCard(group: group, memberTextColor: memberTextColor,
-                    groupTitleColor: groupTitleColor,
-                    totalPriceColor: totalPriceColor)
+                GroupSummaryCard(group: group)
                 
                 VStack(alignment: .leading, spacing: 16) {
                     SectionHeader(title: "Expenses")
@@ -37,7 +22,7 @@ struct GroupDetailView: View {
                     }
                 }
                 .padding()
-                .background(cardBackgroundColor)
+                .background(Color("cardBgColor"))
                 .cornerRadius(16)
                 .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                 
@@ -49,37 +34,13 @@ struct GroupDetailView: View {
                     }
                 }
                 .padding()
-                .background(cardBackgroundColor)
+                .background(Color("cardBgColor"))
                 .cornerRadius(16)
                 .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
             }
             .padding()
         }
-        .background(backgroundColor.edgesIgnoringSafeArea(.all))
-    }
-    
-    private var backgroundColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.backgroundColorDark) : UIColor(self.backgroundColorLight)
-        })
-    }
-    
-    private var cardBackgroundColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.cardBackgroundDark) : UIColor(self.cardBackgroundLight)
-        })
-    }
-    
-    private var memberTextColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.memberColorDark) : UIColor(self.memberColorLight)
-        })
-    }
-    
-    private var groupTitleColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.titleColorDark) : UIColor(self.titleColorLight)
-        })
+        .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
     }
     
     private func calculateOwedAmount(for member: String) -> Double {
@@ -90,42 +51,37 @@ struct GroupDetailView: View {
 
 struct GroupSummaryCard: View {
     let group: Group
-    let memberTextColor: Color
-    let groupTitleColor : Color
-    let totalPriceColor: Color
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text(group.name)
                 .font(.custom("AvenirNext-Bold", size: 28))
-                .foregroundColor(groupTitleColor)
+                .foregroundColor(Color("groupTitleColor"))
             
             HStack {
                 Image(systemName: "person.3.fill")
-                    .foregroundColor(memberTextColor)
+                    .foregroundColor(Color("memberColor"))
                 Text(group.members.joined(separator: ", "))
                     .font(.custom("AvenirNext-Regular", size: 16))
-                    .foregroundColor(memberTextColor)
+                    .foregroundColor(Color("memberColor"))
             }
             
             HStack {
                 Text("Total")
                     .font(.custom("AvenirNext-Medium", size: 18))
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color("priceColor"))
                 Spacer()
                 Text("$\(String(format: "%.2f", group.totalAmount))")
                     .font(.custom("DINAlternate-Bold", size: 24))
-                    .foregroundColor(totalPriceColor)
+                    .foregroundColor(Color("priceColor"))
             }
         }
         .padding()
-        .background(
-            LinearGradient(gradient: Gradient(colors: [Color.blue.opacity(0.1), Color.purple.opacity(0.1)]), startPoint: .topLeading, endPoint: .bottomTrailing)
-        )
+        .background(Color("cardBgColor"))
         .cornerRadius(16)
         .overlay(
             RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.blue.opacity(0.2), lineWidth: 1)
+                .stroke(Color.blue.opacity(0.8), lineWidth: 1)
         )
     }
 }
@@ -137,10 +93,11 @@ struct ExpenseRow: View {
         HStack {
             Text(expense.title)
                 .font(.custom("AvenirNext-Medium", size: 16))
+                .foregroundColor(Color("nameExpenseColor"))
             Spacer()
             Text("$\(String(format: "%.2f", expense.amount))")
                 .font(.custom("DINAlternate-Bold", size: 18))
-                .foregroundColor(.blue)
+                .foregroundColor(Color("priceExpenseColor"))
         }
         .padding(.vertical, 8)
     }
@@ -154,10 +111,11 @@ struct OwedRow: View {
         HStack {
             Text(member)
                 .font(.custom("AvenirNext-Medium", size: 16))
+                .foregroundColor(Color("nameMemberColor"))
             Spacer()
             Text("$\(String(format: "%.2f", amount))")
                 .font(.custom("DINAlternate-Bold", size: 18))
-                .foregroundColor(.orange)
+                .foregroundColor(Color("priceOweColor"))
         }
         .padding(.vertical, 8)
     }
@@ -169,7 +127,7 @@ struct SectionHeader: View {
     var body: some View {
         Text(title)
             .font(.custom("AvenirNext-DemiBold", size: 22))
-            .foregroundColor(.primary)
+            .foregroundColor(Color("groupTitleColor"))
     }
 }
 
