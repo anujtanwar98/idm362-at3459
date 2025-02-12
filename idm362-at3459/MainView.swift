@@ -14,6 +14,7 @@ struct MainView: View {
           Label("About", systemImage: "info.circle.fill")
         }
     }
+    .tint(Color("groupTitleColor"))
   }
 }
 
