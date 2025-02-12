@@ -24,16 +24,16 @@ struct CreateGroupView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                backgroundColor
+                Color("bgColorApp")
                     .edgesIgnoringSafeArea(.all)
                 
             Form {
                 Section(header: Text("Group Name")) {
                     TextField("Enter group name", text: $groupName)
-                        .foregroundColor(textColor)
+                        .foregroundColor(Color("groupTitleColor"))
                         .font(.custom("AvenirNext-Medium", size: 16))
                 }
-                .listRowBackground(textInputBackgroundColor)
+                .listRowBackground(Color("cardBgColor"))
                 
                 Section(header: Text("Add Members")) {
                     HStack {
@@ -41,11 +41,13 @@ struct CreateGroupView: View {
                             .foregroundColor(memberTextColor)
                         Button(action: addMember) {
                             Text(" Add")
+                                .font(.custom("AvenirNext-DemiBold", size: 16))
+                                .foregroundColor(Color("priceOweColor"))
                         }
                         .disabled(newMember.isEmpty)
                     }
                 }
-                .listRowBackground(textInputBackgroundColor)
+                .listRowBackground(Color("cardBgColor"))
                 
                 Section(header: Text("Members")) {
                     List {
@@ -56,11 +58,12 @@ struct CreateGroupView: View {
                         .onDelete(perform: deleteMember)
                     }
                 }
-                .listRowBackground(textInputBackgroundColor)
+                .listRowBackground(Color("cardBgColor"))
             }
             .scrollContentBackground(.hidden)
         }
             .navigationTitle("Create New Group")
+            .foregroundColor(Color("groupTitleColor"))
             .navigationBarItems(
                 leading: Button("Cancel") {
                     presentationMode.wrappedValue.dismiss()
