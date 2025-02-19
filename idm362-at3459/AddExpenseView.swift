@@ -1,16 +1,6 @@
 import SwiftUI
 
 struct AddExpenseView: View {
-    private let backgroundColorLight = Color(red: 0.98, green: 0.97, blue: 0.95)
-    private let backgroundColorDark = Color(red: 0.13, green: 0.12, blue: 0.15)
-    private let textInputBackgroundLight = Color(red: 1.0, green: 1.0, blue: 1.0)
-    private let textInputBackgroundDark = Color(red: 0.18, green: 0.17, blue: 0.20)
-    private let textColorLight = Color(red: 0.27, green: 0.11, blue: 0.30)
-    private let textColorDark = Color(red: 0.91, green: 0.72, blue: 0.95)
-    private let memberColorLight = Color(red: 0.08, green: 0.18, blue: 0.27)
-    private let memberColorDark = Color(red: 0.56, green: 0.80, blue: 0.99)
-    private let headerTextColorLight = Color(red: 0.4, green: 0.4, blue: 0.4)
-    private let headerTextColorDark = Color(red: 0.6, green: 0.6, blue: 0.6)
     
     @Environment(\.presentationMode) var presentationMode
     @State private var expenseName: String = ""
@@ -21,23 +11,23 @@ struct AddExpenseView: View {
     var body: some View {
         NavigationView {
             ZStack {
-                backgroundColor
+                Color("bgColorApp")
                     .edgesIgnoringSafeArea(.all)
                 
                 Form {
-                    Section(header: Text("Expense Details")) {
+                    Section(header: Text("Expense Details").foregroundColor(Color("groupTitleColor"))) {
                         TextField("Expense name", text: $expenseName)
-                            .foregroundColor(textColor)
+                            .foregroundColor(Color("groupTitleColor"))
                             .font(.custom("AvenirNext-Medium", size: 16))
                         
                         TextField("Amount", text: $amount)
-                            .foregroundColor(textColor)
+                            .foregroundColor(Color("priceColor"))
                             .font(.custom("AvenirNext-Medium", size: 16))
                             .keyboardType(.decimalPad)
                     }
-                    .listRowBackground(textInputBackgroundColor)
+                    .listRowBackground(Color("cardBgColor"))
                     
-                    Section(header: Text("Split Between")) {
+                    Section(header: Text("Split Between").foregroundColor(Color("groupTitleColor"))) {
                         ForEach(availableMembers, id: \.self) { member in
                             Toggle(member, isOn: Binding(
                                 get: { selectedMembers.contains(member) },
@@ -49,10 +39,10 @@ struct AddExpenseView: View {
                                     }
                                 }
                             ))
-                            .foregroundColor(memberTextColor)
+                            .foregroundColor(Color("memberColor"))
                         }
                     }
-                    .listRowBackground(textInputBackgroundColor)
+                    .listRowBackground(Color("cardBgColor"))
                 }
                 .scrollContentBackground(.hidden)
             }
@@ -67,37 +57,6 @@ struct AddExpenseView: View {
                 .disabled(expenseName.isEmpty || amount.isEmpty || selectedMembers.isEmpty)
             )
         }
-    }
-    
-    
-    private var backgroundColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.backgroundColorDark) : UIColor(self.backgroundColorLight)
-        })
-    }
-    
-    private var textColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textColorDark) : UIColor(self.textColorLight)
-        })
-    }
-    
-    private var memberTextColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.memberColorDark) : UIColor(self.memberColorLight)
-        })
-    }
-    
-    private var textInputBackgroundColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.textInputBackgroundDark) : UIColor(self.textInputBackgroundLight)
-        })
-    }
-    
-    private var headerTextColor: Color {
-        Color(UIColor { traitCollection in
-            return traitCollection.userInterfaceStyle == .dark ? UIColor(self.headerTextColorDark) : UIColor(self.headerTextColorLight)
-        })
     }
     
     private func saveExpense() {
