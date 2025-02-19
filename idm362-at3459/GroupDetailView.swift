@@ -1,24 +1,41 @@
 import SwiftUI
 
 struct GroupDetailView: View {
-    let group = Group(name: "Weekend Getaway", members: ["Alex", "Bob", "Charlie", "David"], totalAmount: 1250)
-    let expenses = [
-        Expense(title: "Lunch", amount: 400),
-        Expense(title: "Dinner", amount: 200),
-        Expense(title: "Car Rental", amount: 300),
-        Expense(title: "Activities", amount: 150)
-    ]
+    var group: Group
+    @State private var expenses: [Expense] = []
+    @State private var showAddExpenseSheet = false
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                GroupSummaryCard(group: group)
+                GroupSummaryCard(group: group, totalExpenses: calculateTotalExpenses())
                 
                 VStack(alignment: .leading, spacing: 16) {
-                    SectionHeader(title: "Expenses")
+                    HStack {
+                        SectionHeader(title: "Expenses")
+                        Spacer()
+                        Button(action: {
+                            showAddExpenseSheet = true
+                        }) {
+                            Image(systemName: "plus.circle.fill")
+                                .font(.system(size: 22))
+                                .foregroundColor(Color.blue)
+                        }
+                    }
                     
-                    ForEach(expenses) { expense in
-                        ExpenseRow(expense: expense)
+                    if expenses.isEmpty {
+                        HStack {
+                            Spacer()
+                            Text("No expenses yet")
+                                .font(.custom("AvenirNext-Regular", size: 16))
+                                .foregroundColor(Color("memberColor"))
+                                .padding(.vertical)
+                            Spacer()
+                        }
+                    } else {
+                        ForEach(expenses) { expense in
+                            ExpenseRow(expense: expense)
+                        }
                     }
                 }
                 .padding()
@@ -26,31 +43,52 @@ struct GroupDetailView: View {
                 .cornerRadius(16)
                 .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                 
-                VStack(alignment: .leading, spacing: 16) {
-                    SectionHeader(title: "Amount Owed")
-                    
-                    ForEach(group.members, id: \.self) { member in
-                        OwedRow(member: member, amount: calculateOwedAmount(for: member))
+                if !expenses.isEmpty {
+                    VStack(alignment: .leading, spacing: 16) {
+                        SectionHeader(title: "Amount Owed")
+                        
+                        ForEach(group.members, id: \.self) { member in
+                            OwedRow(member: member, amount: calculateOwedAmount(for: member))
+                        }
                     }
+                    .padding()
+                    .background(Color("cardBgColor"))
+                    .cornerRadius(16)
+                    .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                 }
-                .padding()
-                .background(Color("cardBgColor"))
-                .cornerRadius(16)
-                .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
             }
             .padding()
         }
         .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
+        .navigationTitle(group.name)
+        .sheet(isPresented: $showAddExpenseSheet) {
+            AddExpenseView(group: group, expenses: $expenses)
+        }
+    }
+    
+    private func calculateTotalExpenses() -> Double {
+        return expenses.reduce(0) { $0 + $1.amount }
     }
     
     private func calculateOwedAmount(for member: String) -> Double {
-        let averageOwed = group.totalAmount / Double(group.members.count)
-        return averageOwed
+        var amountOwed: Double = 0
+        
+        for expense in expenses {
+            if expense.participants.contains(member) {
+                // Calculate this member's share for this specific expense
+                let participantCount = expense.participants.count
+                let shareAmount = expense.amount / Double(participantCount)
+                amountOwed += shareAmount
+            }
+        }
+        
+        return amountOwed
     }
 }
 
 struct GroupSummaryCard: View {
     let group: Group
+    let totalExpenses: Double
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -71,7 +109,7 @@ struct GroupSummaryCard: View {
                     .font(.custom("AvenirNext-Medium", size: 18))
                     .foregroundColor(Color("priceColor"))
                 Spacer()
-                Text("$\(String(format: "%.2f", group.totalAmount))")
+                Text("$\(String(format: "%.2f", totalExpenses))")
                     .font(.custom("DINAlternate-Bold", size: 24))
                     .foregroundColor(Color("priceColor"))
             }
@@ -91,9 +129,18 @@ struct ExpenseRow: View {
     
     var body: some View {
         HStack {
-            Text(expense.title)
-                .font(.custom("AvenirNext-Medium", size: 16))
-                .foregroundColor(Color("nameExpenseColor"))
+            VStack(alignment: .leading, spacing: 4) {
+                Text(expense.title)
+                    .font(.custom("AvenirNext-Medium", size: 16))
+                    .foregroundColor(Color("nameExpenseColor"))
+                
+                if !expense.participants.isEmpty {
+                    Text(expense.participants.joined(separator: ", "))
+                        .font(.custom("AvenirNext-Regular", size: 12))
+                        .foregroundColor(Color("memberColor"))
+                }
+            }
+            
             Spacer()
             Text("$\(String(format: "%.2f", expense.amount))")
                 .font(.custom("DINAlternate-Bold", size: 18))
@@ -135,11 +182,6 @@ struct Expense: Identifiable {
     let id = UUID()
     let title: String
     let amount: Double
-}
-
-#Preview {
-    NavigationView {
-        GroupDetailView()
-    }
+    let participants: [String]
 }
 

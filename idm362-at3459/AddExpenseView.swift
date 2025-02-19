@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct AddExpenseView: View {
-    
     @Environment(\.presentationMode) var presentationMode
+    var group: Group
+    @Binding var expenses: [Expense]
+    
     @State private var expenseName: String = ""
     @State private var amount: String = ""
     @State private var selectedMembers: Set<String> = []
-    let availableMembers = ["Ask", "Assa"]
     
     var body: some View {
         NavigationView {
@@ -28,7 +29,7 @@ struct AddExpenseView: View {
                     .listRowBackground(Color("cardBgColor"))
                     
                     Section(header: Text("Split Between").foregroundColor(Color("groupTitleColor"))) {
-                        ForEach(availableMembers, id: \.self) { member in
+                        ForEach(group.members, id: \.self) { member in
                             Toggle(member, isOn: Binding(
                                 get: { selectedMembers.contains(member) },
                                 set: { isSelected in
@@ -60,13 +61,14 @@ struct AddExpenseView: View {
     }
     
     private func saveExpense() {
+        if let amountValue = Double(amount) {
+            let newExpense = Expense(
+                title: expenseName,
+                amount: amountValue,
+                participants: Array(selectedMembers)
+            )
+            expenses.append(newExpense)
+        }
         presentationMode.wrappedValue.dismiss()
     }
 }
-
-struct AddExpenseView_Previews: PreviewProvider {
-    static var previews: some View {
-        AddExpenseView()
-    }
-}
-

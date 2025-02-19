@@ -6,9 +6,9 @@ struct ContentView: View {
     private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
 
     @State private var groups: [Group] = [
-        Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 1250),
-                Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 320),
-                Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 700)
+        Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 0),
+        Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 0),
+        Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 0)
     ]
     
     @State private var showNewGroupSheet = false
@@ -65,14 +65,14 @@ struct Group: Identifiable {
     let id = UUID()
     let name: String
     let members: [String]
-    let totalAmount: Double
+    var totalAmount: Double
 }
 
 struct GroupCard: View {
     let group: Group
     
     var body: some View {
-        NavigationLink(destination: GroupDetailView()) {
+        NavigationLink(destination: GroupDetailView(group: group)) {
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(group.name)
@@ -110,7 +110,8 @@ struct GroupCard: View {
             }
             .padding()
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color("cardBgColor"))            .cornerRadius(12)
+            .background(Color("cardBgColor"))
+            .cornerRadius(12)
             .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         }
         .buttonStyle(PlainButtonStyle())
@@ -120,4 +121,3 @@ struct GroupCard: View {
 #Preview {
     ContentView()
 }
-
