@@ -19,15 +19,18 @@ struct ContentView: View {
                 Color("bgColorApp")
                     .edgesIgnoringSafeArea(.all)
                 
-                ScrollView {
-                    VStack(spacing: 20) {
-                        ForEach(groups) { group in
-                            GroupCard(group: group)
-                                .transition(.scale)
-                        }
+                List {
+                    ForEach(groups) { group in
+                        GroupCard(group: group)
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
+                            .listRowSeparator(.hidden)
+                            .padding(.vertical, 10)
                     }
-                    .padding()
+                    .onDelete(perform: deleteGroups)
                 }
+                .listStyle(PlainListStyle())
+                .padding(.horizontal)
                 
                 VStack {
                     Spacer()
@@ -59,6 +62,10 @@ struct ContentView: View {
             CreateGroupView(groups: $groups)
         }
     }
+    
+    private func deleteGroups(at offsets: IndexSet) {
+        groups.remove(atOffsets: offsets)
+    }
 }
 
 struct Group: Identifiable {
@@ -72,7 +79,11 @@ struct GroupCard: View {
     let group: Group
     
     var body: some View {
-        NavigationLink(destination: GroupDetailView(group: group)) {
+        ZStack {
+                    NavigationLink(destination: GroupDetailView(group: group)) {
+                        EmptyView()
+                    }
+                    .opacity(0)
             HStack {
                 VStack(alignment: .leading, spacing: 12) {
                     Text(group.name)
@@ -105,7 +116,7 @@ struct GroupCard: View {
                 Spacer()
                 
                 Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(Color("memberColor"))
                     .font(.system(size: 14, weight: .semibold))
             }
             .padding()
@@ -115,6 +126,7 @@ struct GroupCard: View {
             .shadow(color: Color.black.opacity(0.1), radius: 5, x: 0, y: 2)
         }
         .buttonStyle(PlainButtonStyle())
+        .listRowSeparator(.hidden)
     }
 }
 
