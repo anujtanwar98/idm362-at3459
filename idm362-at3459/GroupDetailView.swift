@@ -6,6 +6,7 @@ struct GroupDetailView: View {
     var group: Group
     @StateObject private var dataManager = DataManager.shared
     @State private var showAddExpenseSheet = false
+    @State private var showShareSheet = false
     
     var expenses: [Expense] {
         dataManager.getExpenses(for: group.id)
@@ -74,6 +75,15 @@ struct GroupDetailView: View {
             .padding()
         }
         .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
+        .navigationBarItems(trailing:
+            Button(action: {
+                showShareSheet = true
+            }) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color("groupTitleColor"))
+            }
+        )
         .sheet(isPresented: $showAddExpenseSheet) {
             AddExpenseView(group: group)
         }
