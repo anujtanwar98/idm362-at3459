@@ -74,7 +74,6 @@ struct GroupDetailView: View {
             .padding()
         }
         .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
-        .navigationTitle(group.name)
         .sheet(isPresented: $showAddExpenseSheet) {
             AddExpenseView(group: group)
         }
@@ -85,7 +84,6 @@ struct GroupDetailView: View {
         
         for expense in expenses {
             if expense.participants.contains(member) {
-                // Calculate this member's share for this specific expense
                 let participantCount = expense.participants.count
                 let shareAmount = expense.amount / Double(participantCount)
                 amountOwed += shareAmount
