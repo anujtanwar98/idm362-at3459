@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct GroupDetailView: View {
+    private let accentColor = Color.blue
+    private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
     var group: Group
     @StateObject private var dataManager = DataManager.shared
     @State private var showAddExpenseSheet = false
@@ -21,9 +23,15 @@ struct GroupDetailView: View {
                         Button(action: {
                             showAddExpenseSheet = true
                         }) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 22))
-                                .foregroundColor(Color.blue)
+                            Image(systemName: "plus")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 30, height: 30)
+                                .background(
+                                    LinearGradient(gradient: Gradient(colors: [accentColor, secondaryAccentColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .clipShape(Circle())
+                                .shadow(color: accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
                         }
                     }
                     
@@ -152,7 +160,7 @@ struct ExpenseRow: View {
             
             Button(action: onDelete) {
                 Image(systemName: "trash")
-                    .foregroundColor(.red)
+                    .foregroundColor(Color("groupTitleColor"))
                     .font(.system(size: 14))
             }
             .padding(.leading, 8)
