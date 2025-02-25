@@ -2,8 +2,8 @@ import SwiftUI
 
 struct AddExpenseView: View {
     @Environment(\.presentationMode) var presentationMode
+    @StateObject private var dataManager = DataManager.shared
     var group: Group
-    @Binding var expenses: [Expense]
     
     @State private var expenseName: String = ""
     @State private var amount: String = ""
@@ -65,9 +65,10 @@ struct AddExpenseView: View {
             let newExpense = Expense(
                 title: expenseName,
                 amount: amountValue,
-                participants: Array(selectedMembers)
+                participants: Array(selectedMembers),
+                groupId: group.id
             )
-            expenses.append(newExpense)
+            dataManager.addExpense(newExpense)
         }
         presentationMode.wrappedValue.dismiss()
     }

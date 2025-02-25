@@ -1,9 +1,8 @@
 import SwiftUI
 
 struct CreateGroupView: View {
-    
     @Environment(\.presentationMode) var presentationMode
-    @Binding var groups: [Group]
+    @StateObject private var dataManager = DataManager.shared
     
     @State private var groupName = ""
     @State private var newMember = ""
@@ -15,41 +14,41 @@ struct CreateGroupView: View {
                 Color("bgColorApp")
                     .edgesIgnoringSafeArea(.all)
                 
-            Form {
-                Section(header: Text("Group Name")) {
-                    TextField("Enter group name", text: $groupName)
-                        .foregroundColor(Color("groupTitleColor"))
-                        .font(.custom("AvenirNext-Medium", size: 16))
-                }
-                .listRowBackground(Color("cardBgColor"))
-                
-                Section(header: Text("Add Members")) {
-                    HStack {
-                        TextField("Enter member name", text: $newMember)
-                            .foregroundColor(Color("memberColor"))
-                        Button(action: addMember) {
-                            Text(" Add")
-                                .font(.custom("AvenirNext-DemiBold", size: 16))
-                                .foregroundColor(Color("priceOweColor"))
-                        }
-                        .disabled(newMember.isEmpty)
+                Form {
+                    Section(header: Text("Group Name")) {
+                        TextField("Enter group name", text: $groupName)
+                            .foregroundColor(Color("groupTitleColor"))
+                            .font(.custom("AvenirNext-Medium", size: 16))
                     }
-                }
-                .listRowBackground(Color("cardBgColor"))
-                
-                Section(header: Text("Members")) {
-                    List {
-                        ForEach(members, id: \.self) { member in
-                            Text(member)
+                    .listRowBackground(Color("cardBgColor"))
+                    
+                    Section(header: Text("Add Members")) {
+                        HStack {
+                            TextField("Enter member name", text: $newMember)
                                 .foregroundColor(Color("memberColor"))
+                            Button(action: addMember) {
+                                Text(" Add")
+                                    .font(.custom("AvenirNext-DemiBold", size: 16))
+                                    .foregroundColor(Color("priceOweColor"))
+                            }
+                            .disabled(newMember.isEmpty)
                         }
-                        .onDelete(perform: deleteMember)
                     }
+                    .listRowBackground(Color("cardBgColor"))
+                    
+                    Section(header: Text("Members")) {
+                        List {
+                            ForEach(members, id: \.self) { member in
+                                Text(member)
+                                    .foregroundColor(Color("memberColor"))
+                            }
+                            .onDelete(perform: deleteMember)
+                        }
+                    }
+                    .listRowBackground(Color("cardBgColor"))
                 }
-                .listRowBackground(Color("cardBgColor"))
+                .scrollContentBackground(.hidden)
             }
-            .scrollContentBackground(.hidden)
-        }
             .navigationTitle("Create New Group")
             .foregroundColor(Color("groupTitleColor"))
             .navigationBarItems(
@@ -77,13 +76,13 @@ struct CreateGroupView: View {
     
     private func saveGroup() {
         let newGroup = Group(name: groupName, members: members, totalAmount: 0)
-        groups.append(newGroup)
+        dataManager.addGroup(newGroup)
         presentationMode.wrappedValue.dismiss()
     }
 }
 
 struct CreateGroupView_Previews: PreviewProvider {
     static var previews: some View {
-        CreateGroupView(groups: .constant([]))
+        CreateGroupView()
     }
 }

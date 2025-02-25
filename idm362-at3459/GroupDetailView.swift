@@ -2,13 +2,17 @@ import SwiftUI
 
 struct GroupDetailView: View {
     var group: Group
-    @State private var expenses: [Expense] = []
+    @StateObject private var dataManager = DataManager.shared
     @State private var showAddExpenseSheet = false
+    
+    var expenses: [Expense] {
+        dataManager.getExpenses(for: group.id)
+    }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                GroupSummaryCard(group: group, totalExpenses: calculateTotalExpenses())
+                GroupSummaryCard(group: group, totalExpenses: group.totalAmount)
                 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
@@ -34,7 +38,9 @@ struct GroupDetailView: View {
                         }
                     } else {
                         ForEach(expenses) { expense in
-                            ExpenseRow(expense: expense)
+                            ExpenseRow(expense: expense, onDelete: {
+                                dataManager.deleteExpense(expense)
+                            })
                         }
                     }
                 }
@@ -62,12 +68,8 @@ struct GroupDetailView: View {
         .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
         .navigationTitle(group.name)
         .sheet(isPresented: $showAddExpenseSheet) {
-            AddExpenseView(group: group, expenses: $expenses)
+            AddExpenseView(group: group)
         }
-    }
-    
-    private func calculateTotalExpenses() -> Double {
-        return expenses.reduce(0) { $0 + $1.amount }
     }
     
     private func calculateOwedAmount(for member: String) -> Double {
@@ -126,6 +128,7 @@ struct GroupSummaryCard: View {
 
 struct ExpenseRow: View {
     let expense: Expense
+    let onDelete: () -> Void
     
     var body: some View {
         HStack {
@@ -142,9 +145,17 @@ struct ExpenseRow: View {
             }
             
             Spacer()
+            
             Text("$\(String(format: "%.2f", expense.amount))")
                 .font(.custom("DINAlternate-Bold", size: 18))
                 .foregroundColor(Color("priceExpenseColor"))
+            
+            Button(action: onDelete) {
+                Image(systemName: "trash")
+                    .foregroundColor(.red)
+                    .font(.system(size: 14))
+            }
+            .padding(.leading, 8)
         }
         .padding(.vertical, 8)
     }
@@ -177,11 +188,3 @@ struct SectionHeader: View {
             .foregroundColor(Color("groupTitleColor"))
     }
 }
-
-struct Expense: Identifiable {
-    let id = UUID()
-    let title: String
-    let amount: Double
-    let participants: [String]
-}
-

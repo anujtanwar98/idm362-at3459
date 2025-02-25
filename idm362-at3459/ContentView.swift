@@ -5,12 +5,7 @@ struct ContentView: View {
     private let accentColor = Color.blue
     private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
 
-    @State private var groups: [Group] = [
-        Group(name: "Weekend Getaway", members: ["Alex", "Bob", "David"], totalAmount: 0),
-        Group(name: "Dinner Party", members: ["Joe", "Frank", "Grace"], totalAmount: 0),
-        Group(name: "Road Trip", members: ["Kevin", "Lee", "Mia"], totalAmount: 0)
-    ]
-    
+    @StateObject private var dataManager = DataManager.shared
     @State private var showNewGroupSheet = false
     
     var body: some View {
@@ -20,7 +15,7 @@ struct ContentView: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 List {
-                    ForEach(groups) { group in
+                    ForEach(dataManager.groups) { group in
                         GroupCard(group: group)
                             .listRowInsets(EdgeInsets())
                             .listRowBackground(Color.clear)
@@ -59,20 +54,13 @@ struct ContentView: View {
             .navigationBarTitleDisplayMode(.large)
         }
         .sheet(isPresented: $showNewGroupSheet) {
-            CreateGroupView(groups: $groups)
+            CreateGroupView()
         }
     }
     
     private func deleteGroups(at offsets: IndexSet) {
-        groups.remove(atOffsets: offsets)
+        dataManager.deleteGroup(at: offsets)
     }
-}
-
-struct Group: Identifiable {
-    let id = UUID()
-    let name: String
-    let members: [String]
-    var totalAmount: Double
 }
 
 struct GroupCard: View {
