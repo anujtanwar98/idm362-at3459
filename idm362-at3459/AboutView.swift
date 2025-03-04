@@ -99,7 +99,7 @@ struct ExampleView: View {
                 BulletPoint(text: "FairShare will calculate the split only among those 4")
             }
             
-            Text("This ensures fair and accurate expense tracking for everyone involved!")
+            Text("This ensures fair and accurate expense tracking for everyone involved!!")
                 .font(.custom("AvenirNext-Regular", size: 14))
                 .foregroundColor(Color("memberColor"))
         }
