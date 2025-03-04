@@ -87,6 +87,9 @@ struct GroupDetailView: View {
         .sheet(isPresented: $showAddExpenseSheet) {
             AddExpenseView(group: group)
         }
+        .sheet(isPresented: $showShareSheet) {
+            ShareSheet(activityItems: [createShareText()])
+        }
     }
     
     private func calculateOwedAmount(for member: String) -> Double {
@@ -101,6 +104,48 @@ struct GroupDetailView: View {
         }
         
         return amountOwed
+    }
+    
+    private func createShareText() -> String {
+        var shareText = "FairShare Group: \(group.name)\n"
+        shareText += "Members: \(group.members.joined(separator: ", "))\n"
+        shareText += "Total Expenses: $\(String(format: "%.2f", group.totalAmount))\n\n"
+        
+        if !expenses.isEmpty {
+            shareText += "Expenses:\n"
+            for expense in expenses {
+                shareText += "- \(expense.title): $\(String(format: "%.2f", expense.amount))\n"
+                shareText += "  Participants: \(expense.participants.joined(separator: ", "))\n"
+            }
+            
+            shareText += "\nAmount Owed:\n"
+            for member in group.members {
+                let amount = calculateOwedAmount(for: member)
+                shareText += "- \(member): $\(String(format: "%.2f", amount))\n"
+            }
+        } else {
+            shareText += "No expenses added yet."
+        }
+        
+        return shareText
+    }
+}
+
+// UIKit ShareSheet wrapper for SwiftUI
+struct ShareSheet: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]? = nil
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities
+        )
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // Nothing to update
     }
 }
 
