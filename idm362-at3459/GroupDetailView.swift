@@ -190,6 +190,7 @@ struct GroupSummaryCard: View {
 struct ExpenseRow: View {
     let expense: Expense
     let onDelete: () -> Void
+    @State private var showDeleteAlert = false
     
     var body: some View {
         HStack {
@@ -211,12 +212,24 @@ struct ExpenseRow: View {
                 .font(.custom("DINAlternate-Bold", size: 18))
                 .foregroundColor(Color("priceExpenseColor"))
             
-            Button(action: onDelete) {
+            Button(action: {
+                showDeleteAlert = true
+            }) {
                 Image(systemName: "trash")
                     .foregroundColor(Color("groupTitleColor"))
                     .font(.system(size: 14))
             }
             .padding(.leading, 8)
+            .alert(isPresented: $showDeleteAlert) {
+                Alert(
+                    title: Text("Caution!!"),
+                    message: Text("Are you sure you want to delete this expense?"),
+                    primaryButton: .destructive(Text("Delete")) {
+                        onDelete()
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
         }
         .padding(.vertical, 8)
     }
