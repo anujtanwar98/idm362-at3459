@@ -1,14 +1,21 @@
 import SwiftUI
 
 struct GroupDetailView: View {
+    private let accentColor = Color.blue
+    private let secondaryAccentColor = Color(red: 1.0, green: 0.3, blue: 0.5)
     var group: Group
-    @State private var expenses: [Expense] = []
+    @StateObject private var dataManager = DataManager.shared
     @State private var showAddExpenseSheet = false
+    @State private var showShareSheet = false
+    
+    var expenses: [Expense] {
+        dataManager.getExpenses(for: group.id)
+    }
     
     var body: some View {
         ScrollView {
             VStack(spacing: 24) {
-                GroupSummaryCard(group: group, totalExpenses: calculateTotalExpenses())
+                GroupSummaryCard(group: group, totalExpenses: group.totalAmount)
                 
                 VStack(alignment: .leading, spacing: 16) {
                     HStack {
@@ -17,9 +24,15 @@ struct GroupDetailView: View {
                         Button(action: {
                             showAddExpenseSheet = true
                         }) {
-                            Image(systemName: "plus.circle.fill")
-                                .font(.system(size: 22))
-                                .foregroundColor(Color.blue)
+                            Image(systemName: "plus")
+                                .font(.system(size: 22, weight: .bold))
+                                .foregroundColor(.white)
+                                .frame(width: 30, height: 30)
+                                .background(
+                                    LinearGradient(gradient: Gradient(colors: [accentColor, secondaryAccentColor]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .clipShape(Circle())
+                                .shadow(color: accentColor.opacity(0.3), radius: 10, x: 0, y: 5)
                         }
                     }
                     
@@ -34,7 +47,9 @@ struct GroupDetailView: View {
                         }
                     } else {
                         ForEach(expenses) { expense in
-                            ExpenseRow(expense: expense)
+                            ExpenseRow(expense: expense, onDelete: {
+                                dataManager.deleteExpense(expense)
+                            })
                         }
                     }
                 }
@@ -60,14 +75,21 @@ struct GroupDetailView: View {
             .padding()
         }
         .background(Color("bgColorApp").edgesIgnoringSafeArea(.all))
-        .navigationTitle(group.name)
+        .navigationBarItems(trailing:
+            Button(action: {
+                showShareSheet = true
+            }) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(Color("groupTitleColor"))
+            }
+        )
         .sheet(isPresented: $showAddExpenseSheet) {
-            AddExpenseView(group: group, expenses: $expenses)
+            AddExpenseView(group: group)
         }
-    }
-    
-    private func calculateTotalExpenses() -> Double {
-        return expenses.reduce(0) { $0 + $1.amount }
+        .sheet(isPresented: $showShareSheet) {
+            ShareSheet(activityItems: [createShareText()])
+        }
     }
     
     private func calculateOwedAmount(for member: String) -> Double {
@@ -75,7 +97,6 @@ struct GroupDetailView: View {
         
         for expense in expenses {
             if expense.participants.contains(member) {
-                // Calculate this member's share for this specific expense
                 let participantCount = expense.participants.count
                 let shareAmount = expense.amount / Double(participantCount)
                 amountOwed += shareAmount
@@ -83,6 +104,48 @@ struct GroupDetailView: View {
         }
         
         return amountOwed
+    }
+    
+    private func createShareText() -> String {
+        var shareText = "FairShare Group: \(group.name)\n"
+        shareText += "Members: \(group.members.joined(separator: ", "))\n"
+        shareText += "Total Expenses: $\(String(format: "%.2f", group.totalAmount))\n\n"
+        
+        if !expenses.isEmpty {
+            shareText += "Expenses:\n"
+            for expense in expenses {
+                shareText += "- \(expense.title): $\(String(format: "%.2f", expense.amount))\n"
+                shareText += "  Participants: \(expense.participants.joined(separator: ", "))\n"
+            }
+            
+            shareText += "\nAmount Owed:\n"
+            for member in group.members {
+                let amount = calculateOwedAmount(for: member)
+                shareText += "- \(member): $\(String(format: "%.2f", amount))\n"
+            }
+        } else {
+            shareText += "No expenses added yet."
+        }
+        
+        return shareText
+    }
+}
+
+// UIKit ShareSheet wrapper for SwiftUI
+struct ShareSheet: UIViewControllerRepresentable {
+    var activityItems: [Any]
+    var applicationActivities: [UIActivity]? = nil
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(
+            activityItems: activityItems,
+            applicationActivities: applicationActivities
+        )
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {
+        // Nothing to update
     }
 }
 
@@ -126,6 +189,8 @@ struct GroupSummaryCard: View {
 
 struct ExpenseRow: View {
     let expense: Expense
+    let onDelete: () -> Void
+    @State private var showDeleteAlert = false
     
     var body: some View {
         HStack {
@@ -142,9 +207,29 @@ struct ExpenseRow: View {
             }
             
             Spacer()
+            
             Text("$\(String(format: "%.2f", expense.amount))")
                 .font(.custom("DINAlternate-Bold", size: 18))
                 .foregroundColor(Color("priceExpenseColor"))
+            
+            Button(action: {
+                showDeleteAlert = true
+            }) {
+                Image(systemName: "trash")
+                    .foregroundColor(Color("groupTitleColor"))
+                    .font(.system(size: 14))
+            }
+            .padding(.leading, 8)
+            .alert(isPresented: $showDeleteAlert) {
+                Alert(
+                    title: Text("Caution!!"),
+                    message: Text("Are you sure you want to delete this expense?"),
+                    primaryButton: .destructive(Text("Delete")) {
+                        onDelete()
+                    },
+                    secondaryButton: .cancel()
+                )
+            }
         }
         .padding(.vertical, 8)
     }
@@ -177,11 +262,3 @@ struct SectionHeader: View {
             .foregroundColor(Color("groupTitleColor"))
     }
 }
-
-struct Expense: Identifiable {
-    let id = UUID()
-    let title: String
-    let amount: Double
-    let participants: [String]
-}
-

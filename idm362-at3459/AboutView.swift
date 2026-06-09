@@ -7,6 +7,8 @@ struct AboutView: View {
             VStack(alignment: .leading, spacing: 24) {
                 HeaderView()
                 
+                ExampleView()
+                
                 FeatureCard(icon: "dollarsign.circle.fill", title: "Smart Bill Splitting", description: "Easily split bills among friends, family, or colleagues. FairShare calculates who owes what, so you don't have to.")
                 
                 FeatureCard(icon: "list.bullet.rectangle.fill", title: "Itemized Expenses", description: "Add detailed, itemized expenses to your groups. Track exactly what was spent and who was involved.")
@@ -15,7 +17,9 @@ struct AboutView: View {
                 
                 FeatureCard(icon: "function", title: "Precise Calculations", description: "FairShare accurately calculates individual contributions, considering partial participation in expenses.")
                 
-                ExampleView()
+                FeatureCard(icon: "square.and.arrow.up.circle.fill", title: "Share Expenses as .txt File", description: "FairShare allows you to share all the expenses as a text file, so people can easily open and see the expenses on their devices.")
+                
+                
             }
             .padding()
         }
@@ -84,9 +88,14 @@ struct FeatureCard: View {
 struct ExampleView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
+            
             Text("How It Works")
                 .font(.custom("AvenirNext-Bold", size: 22))
                 .foregroundColor(Color("groupTitleColor"))
+            Text("Scenario:")
+                .font(.custom("AvenirNext-Bold", size: 16))
+                .foregroundColor(Color("groupTitleColor"))
+                .padding(.bottom, -10)
             
             Text("Imagine a group of 6 friends on a trip. For one meal, only 4 people participated. With FairShare, you can:")
                 .font(.custom("AvenirNext-Regular", size: 14))
@@ -97,6 +106,7 @@ struct ExampleView: View {
                 BulletPoint(text: "Add the meal as an expense")
                 BulletPoint(text: "Select only the 4 people who participated")
                 BulletPoint(text: "FairShare will calculate the split only among those 4")
+                BulletPoint(text: "FairShare allows you to share expenses as a .txt file")
             }
             
             Text("This ensures fair and accurate expense tracking for everyone involved!")

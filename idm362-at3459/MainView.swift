@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct MainView: View {
-  
   var body: some View {
     TabView {
       ContentView()
@@ -9,11 +8,12 @@ struct MainView: View {
           Label("Home", systemImage: "house.fill")
         }
       
-        AboutView()
+      AboutView()
         .tabItem {
           Label("About", systemImage: "info.circle.fill")
         }
     }
+    .tabViewStyle(.sidebarAdaptable)
     .tint(Color("groupTitleColor"))
   }
 }
